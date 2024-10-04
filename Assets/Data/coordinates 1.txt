@@ -1,0 +1,12 @@
+[MapInfo]
+Name=Airman ga taosenai
+Author=Team Nekokan
+Length=145
+SongPath=nazwamapy\song.mp3
+BGImage=nazwamapy\BG.png
+Difficulty=Hard
+
+[Beatmap]
+KA;2,27;1
+KB;3,98;-1
+[End]
