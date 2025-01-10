@@ -2,13 +2,14 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System;
 
 public class AudioAnalyzerManager : MonoBehaviour
 {
     public float sensitivity = 1.0f;
     private AudioSource audioSource;
     private IAudioFileReader audioFileReader;
-    public List<float> audioAmplitudes;
+    List<Tuple<float, float, int>> audioSpikes = new List<Tuple<float, float, int>>();
     private MapGenerator generator;
 
     void Start()
@@ -39,8 +40,8 @@ public class AudioAnalyzerManager : MonoBehaviour
 
                 yield return StartCoroutine(audioFileReader.AnalyzeAudio(clip));
 
-                audioAmplitudes = audioFileReader.GetAmplitudes();
-                generator.SetAmplitudes(audioAmplitudes);
+                audioSpikes = audioFileReader.GetSpikes();
+                generator.SetSpikes(audioSpikes);
                 generator.GenerateMap(outputFilePath);
             }
         }

@@ -6,16 +6,16 @@ using UnityEngine;
 public class MapGenerator
 {
     private float sensitivity;
-    private List<float> audioAmplitudes;
+    List<Tuple<float, float, int>> audioSpikes = new List<Tuple<float, float, int>>();
 
     public MapGenerator(float sensitivity)
     {
         this.sensitivity = sensitivity;
     }
 
-    public void SetAmplitudes(List<float> amplitudes)
+    public void SetSpikes(List<Tuple<float, float, int>> spikes)
     {
-        audioAmplitudes = amplitudes;
+        audioSpikes = spikes;
     }
 
     public void GenerateMap(string outputFilePath)
@@ -28,15 +28,15 @@ public class MapGenerator
             Directory.CreateDirectory(directoryPath); // Tworzenie brakuj¹cych katalogów
         }
 
-        if (audioAmplitudes == null || audioAmplitudes.Count == 0)
+        if (audioSpikes == null || audioSpikes.Count == 0)
         {
             Debug.LogError("No amplitudes available for map generation.");
             return;
         }
 
-        for (int i = 0; i < audioAmplitudes.Count; i++)
+        for (int i = 0; i < audioSpikes.Count; i++)
         {
-            beatmapData.Add($"1;{audioAmplitudes[i]};");
+            beatmapData.Add($"1;{audioSpikes[i]};");
         }
 
         try
