@@ -5,18 +5,19 @@ using SimpleFileBrowser;
 
 public class FileBrowserTest : MonoBehaviour
 {
-
+    [SerializeField]
+    private AudioAnalyzerManager audioAnalyzerManager;
     public void SelectFile()
     {
         // Set filters (optional)
         // It is sufficient to set the filters just once (instead of each time before showing the file browser dialog), 
         // if all the dialogs will be using the same filters
-        FileBrowser.SetFilters(true, new FileBrowser.Filter("OsuFiles", ".osu"));
+        FileBrowser.SetFilters(true, new FileBrowser.Filter("SoundFiles", ".wav", ".mp3"));
 
         // Set default filter that is selected when the dialog is shown (optional)
         // Returns true if the default filter is set successfully
         // In this case, set Images filter as the default filter
-        FileBrowser.SetDefaultFilter(".osu");
+        FileBrowser.SetDefaultFilter(".wav");
 
         // Set excluded file extensions (optional) (by default, .lnk and .tmp extensions are excluded)
         // Note that when you use this function, .lnk and .tmp extensions will no longer be
@@ -78,6 +79,6 @@ public class FileBrowserTest : MonoBehaviour
             string destinationPath = Path.Combine(Application.persistentDataPath, FileBrowserHelpers.GetFilename(FileBrowser.Result[0]));
             FileBrowserHelpers.CopyFile(FileBrowser.Result[0], destinationPath);
         }
-        DataProcessor.Main(FileBrowser.Result[0], "/Beatmaps/mapgenerating.txt");
+        audioAnalyzerManager.Main(FileBrowser.Result[0], "Assets/Beatmaps/mapgenerating.txt");
     }
 }
