@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.IO;
 using System.Collections;
+using UnityEngine.Networking;
 public class ObjectPlacer : MonoBehaviour
 {
     [System.Serializable]
@@ -19,23 +20,43 @@ public class ObjectPlacer : MonoBehaviour
 
     public PrefabCodePair[] prefabCodePairs;
     public string filePath;
-    public AudioClip[] songs;
+    public AudioClip song;
     public Transform parentObject;
 
     void Start()
     {
+        StartCoroutine(LoadAudio());
         StartCoroutine(PlaceObjectsCoroutine());
         loading.SetActive(true);
-    }
 
+    }
+    
+    private IEnumerator LoadAudio()
+    {
+        UnityWebRequest req = UnityWebRequestMultimedia.GetAudioClip("file:///" + Path.Combine(Application.dataPath, "Beatmaps/song.wav"), AudioType.WAV);
+        yield return req.SendWebRequest();
+        if (req.result == UnityWebRequest.Result.Success)
+        {
+            song = DownloadHandlerAudioClip.GetContent(req);
+            Debug.Log("Song loaded successfully.");
+        }
+        else
+        {
+            Debug.LogError("Failed to load the audio: " + req.error);
+        }
+    }
     private IEnumerator PlaceObjectsCoroutine()
     {
+
         AudioSource mapa = GameObject.Find("Map").GetComponent<AudioSource>();
-        mapa.clip = songs[SongSelect.id];
+        while (song == null) //czeka na piosenke
+        {
+            yield return null;
+        }
+        mapa.clip = song;
         bool isBeatmapSection = false;
         float lastX= 0;
         filePath = "Assets/Beatmaps/map.txt";
-
         string[] lines = File.ReadAllLines(filePath);
 
         for (int i = 0; i < lines.Length; i++)

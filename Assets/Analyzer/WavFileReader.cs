@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
 using System.IO;
+using System.Numerics;
 using UnityEngine;
 
 public class WavFileReader : AudioFileReaderBase
@@ -28,7 +28,7 @@ public class WavFileReader : AudioFileReaderBase
 
         float[][] channelSamples = ParseAudioData(fileBytes, dataStartIndex, bitsPerSample, channels);
 
-        // £¹czenie danych kana³ów dla AudioClip
+        // laczenie kanalow do AudioClip
         int totalSamples = channelSamples[0].Length;
         float[] mergedSamples = new float[totalSamples * channels];
         for (int i = 0; i < totalSamples; i++)
@@ -41,6 +41,7 @@ public class WavFileReader : AudioFileReaderBase
 
         AudioClip clip = AudioClip.Create("WavAudio", totalSamples, channels, sampleRate, false);
         clip.SetData(mergedSamples, 0);
+
         return clip;
     }
 
@@ -93,44 +94,4 @@ public class WavFileReader : AudioFileReaderBase
         return channelSamples;
     }
 
-    public IEnumerator AnalyzeAudio(AudioClip clip)
-    {
-        int sampleSize = clip.frequency;
-        int totalSamples = clip.samples;
-        int channels = clip.channels;
-
-        float[] samples = new float[totalSamples * channels];
-        clip.GetData(samples, 0);
-
-        float spikeThreshold = 0.2f;
-
-        for (int i = 0; i < totalSamples; i += sampleSize)
-        {
-            int remainingSamples = totalSamples - i;
-            int currentSampleSize = Mathf.Min(sampleSize, remainingSamples);
-
-            for (int channel = 0; channel < channels; channel++)
-            {
-                float[] sampleChunk = new float[currentSampleSize];
-                for (int j = 0; j < currentSampleSize; j++)
-                {
-                    sampleChunk[j] = samples[(i + j) * channels + channel];
-                }
-
-                float averageAmplitude = CalculateAverageAmplitude(sampleChunk);
-                audioAmplitudes.Add(averageAmplitude);
-
-                if (averageAmplitude > spikeThreshold)
-                {
-                    float time = i / (float)clip.frequency;
-                    Debug.Log($"Spike on channel {channel} at time: {time:F10}, amplitude: {averageAmplitude}");
-                    spikes.Add(new Tuple<float, float, int>(averageAmplitude, time, channel));
-                }
-            }
-
-            yield return null;
-        }
-    }
-
 }
-

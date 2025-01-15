@@ -13,8 +13,6 @@ public class NoteDelete : MonoBehaviour
     private void Awake()
     {
         scoreUpdater = FindObjectOfType<ScoreUpdater>();
-      //  StartCoroutine(Deletion());
-        Debug.Log("xdd");
     }
 
     private void Update()

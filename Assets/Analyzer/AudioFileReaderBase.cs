@@ -1,18 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
 
 public abstract class AudioFileReaderBase : IAudioFileReader
 {
-    protected List<float> audioAmplitudes = new List<float>();
-    protected List<Tuple<float, float, int>> spikes = new List<Tuple<float, float, int>>();  // Tuple of (Amplitude, Time, Channel)
+    protected List<float> audioAmplitudes = new();
+    protected List<Tuple<float, float, int>> spikes = new(); // Tuple (Amplitude, Time, Channel)
+    protected float bpm = 120;
 
     public abstract AudioClip ToAudioClip();
 
-public IEnumerator AnalyzeAudio(AudioClip clip)
+    public IEnumerator AnalyzeAudio (AudioClip clip)
     {
-        int sampleSize = clip.frequency;
+        int sampleSize = Mathf.RoundToInt(clip.frequency * (60 / bpm));
         int totalSamples = clip.samples;
         int channels = clip.channels;
 
@@ -44,8 +46,21 @@ public IEnumerator AnalyzeAudio(AudioClip clip)
                     spikes.Add(new Tuple<float, float, int>(averageAmplitude, time, channel));
                 }
             }
+
+            yield return null;
         }
-        yield return null;
+    }
+
+    public IEnumerator AnalyzeAudioAndDestroyClip(AudioClip clip)
+    {
+        try
+        {
+            yield return AnalyzeAudio(clip);
+        }
+        finally
+        {
+            DestroyAudioClip(clip);
+        }
     }
 
     protected float CalculateAverageAmplitude(float[] sampleChunk)
@@ -58,13 +73,17 @@ public IEnumerator AnalyzeAudio(AudioClip clip)
         return sum / sampleChunk.Length;
     }
 
-    public List<float> GetAmplitudes()
-    {
-        return audioAmplitudes;
-    }
-
     public List<Tuple<float, float, int>> GetSpikes()
     {
         return spikes;
+    }
+
+    public void DestroyAudioClip(AudioClip clip)
+    {
+        if (clip != null)
+        {
+            AudioClip.Destroy(clip);
+            Debug.Log("AudioClip zosta³ zniszczony");
+        }
     }
 }

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.IO;
 using SimpleFileBrowser;
+using UnityEditor;
 
 public class FileBrowserTest : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class FileBrowserTest : MonoBehaviour
         // Set filters (optional)
         // It is sufficient to set the filters just once (instead of each time before showing the file browser dialog), 
         // if all the dialogs will be using the same filters
-        FileBrowser.SetFilters(true, new FileBrowser.Filter("SoundFiles", ".wav", ".mp3"));
+        FileBrowser.SetFilters(true, new FileBrowser.Filter("SoundFiles", ".wav"));
 
         // Set default filter that is selected when the dialog is shown (optional)
         // Returns true if the default filter is set successfully
@@ -64,7 +65,7 @@ public class FileBrowserTest : MonoBehaviour
         // Dialog is closed
         // Print whether the user has selected some files/folders or cancelled the operation (FileBrowser.Success)
         Debug.Log(FileBrowser.Success);
-
+        /*
         if (FileBrowser.Success)
         {
             // Print paths of the selected files (FileBrowser.Result) (null, if FileBrowser.Success is false)
@@ -73,12 +74,21 @@ public class FileBrowserTest : MonoBehaviour
 
             // Read the bytes of the first file via FileBrowserHelpers
             // Contrary to File.ReadAllBytes, this function works on Android 10+, as well
-            byte[] bytes = FileBrowserHelpers.ReadBytesFromFile(FileBrowser.Result[0]);
+            // byte[] bytes = FileBrowserHelpers.ReadBytesFromFile(FileBrowser.Result[0]);
 
             // Or, copy the first file to persistentDataPath
             string destinationPath = Path.Combine(Application.persistentDataPath, FileBrowserHelpers.GetFilename(FileBrowser.Result[0]));
             FileBrowserHelpers.CopyFile(FileBrowser.Result[0], destinationPath);
         }
-        audioAnalyzerManager.Main(FileBrowser.Result[0], "Assets/Beatmaps/mapgenerating.txt");
+        */
+        string destinationPath =  "Beatmaps/Generated/";
+
+        string sourcePath = FileBrowser.Result[0];
+        string fileName = /*Path.GetFileName(sourcePath);*/ "song.wav";
+        string targetPath = Path.Combine(Application.dataPath, destinationPath, fileName);
+
+        File.Copy(sourcePath, targetPath, true);
+    
+        audioAnalyzerManager.Main(FileBrowser.Result[0], Path.Combine(Application.dataPath, destinationPath));
     }
 }

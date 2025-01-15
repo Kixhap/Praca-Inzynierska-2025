@@ -9,20 +9,12 @@ public class SongSelect : MonoBehaviour
     {
          switch(variableToSend)
             {
-                case "Airman":
-                    id = 0;
-                    break;
-                case "Bad":
+                case "Generated":
                     id = 1;
-                    break;
-                case "Night":
-                    id = 2;
-                    break;
-                case "secret":
-                    id = 3;
                     break;
             }
         CopyAndReplaceFile("Assets/Beatmaps/" + variableToSend + "/map.txt", "Assets/Beatmaps/");
+        CopyAndReplaceFile("Assets/Beatmaps/" + variableToSend + "/song.wav", "Assets/Beatmaps/");
     }
 
     void CopyAndReplaceFile(string sourcePath, string destinationFolder)
