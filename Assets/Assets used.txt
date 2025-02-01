@@ -1,7 +1,3 @@
-Map1: https://osu.ppy.sh/beatmapsets/132824
-Map2: https://osu.ppy.sh/beatmapsets/24313
-Map3: https://osu.ppy.sh/beatmapsets/1173144
 https://assetstore.unity.com/packages/tools/utilities/playerprefs-editor-167903
 https://assetstore.unity.com/packages/tools/gui/runtime-file-browser-113006
 https://cooltext.com
-https://osu.ppy.sh/beatmapsets/283841#mania/644293

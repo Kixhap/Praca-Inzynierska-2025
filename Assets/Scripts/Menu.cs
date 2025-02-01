@@ -16,12 +16,12 @@ public class MenuHandler : MonoBehaviour
         Menus[x].SetActive(true);
         buttonsound.Play();
     }
-    public void exit()
+    public void Exit()
     {
         Application.Quit();
     }
 
-    public void playAnimation(int id)
+    public void PlayAnimation(int id)
     {
         switch (id)
         {

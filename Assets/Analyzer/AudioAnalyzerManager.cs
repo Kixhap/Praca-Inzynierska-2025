@@ -7,16 +7,20 @@ using System.IO;
 
 public class AudioAnalyzerManager : MonoBehaviour
 {
-    public float sensitivity = 0.1f;
     private AudioSource audioSource;
     private IAudioFileReader audioFileReader;
     List<Tuple<float, float, int>> audioSpikes = new();
     private MapGenerator generator;
+    [SerializeField] private GameObject backButton;
 
-    void Start()
+    private void Awake()
     {
         audioSource = gameObject.AddComponent<AudioSource>();
-        generator = new MapGenerator(sensitivity);
+        generator = new MapGenerator();
+    }
+    void Start()
+    {
+        backButton.SetActive(false);
     }
 
     public void Main(string filePath, string outputFilePath)
@@ -25,7 +29,6 @@ public class AudioAnalyzerManager : MonoBehaviour
         CultureInfo customCulture = new("pl-PL");
         customCulture.NumberFormat.NumberDecimalSeparator = ",";
         System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
-
         StartCoroutine(LoadAndAnalyzeAudio(filePath, outputFilePath));
     }
 
@@ -45,6 +48,7 @@ public class AudioAnalyzerManager : MonoBehaviour
                 yield return StartCoroutine(audioFileReader.AnalyzeAudio(clip));
 
                 audioSpikes = audioFileReader.GetSpikes();
+                FinishedGenerating();
                 generator.SetSpikes(audioSpikes);
                 generator.GenerateMap(outputFilePath);
             }
@@ -62,5 +66,9 @@ public class AudioAnalyzerManager : MonoBehaviour
             return new WavFileReader(path);
         } 
         return null;
+    }
+    public void FinishedGenerating()
+    {
+        backButton.SetActive(true);
     }
 }

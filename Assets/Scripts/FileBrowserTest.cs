@@ -65,30 +65,21 @@ public class FileBrowserTest : MonoBehaviour
         // Dialog is closed
         // Print whether the user has selected some files/folders or cancelled the operation (FileBrowser.Success)
         Debug.Log(FileBrowser.Success);
-        /*
+        
         if (FileBrowser.Success)
         {
-            // Print paths of the selected files (FileBrowser.Result) (null, if FileBrowser.Success is false)
-            for (int i = 0; i < FileBrowser.Result.Length; i++)
-                Debug.Log(FileBrowser.Result[i]);
+            string destinationPath = "Beatmaps/Generated/";
+            string sourcePath = FileBrowser.Result[0];
+            string fileName = /*Path.GetFileName(sourcePath);*/ "song.wav";
+            string targetPath = Path.Combine(Application.dataPath, destinationPath, fileName);
 
-            // Read the bytes of the first file via FileBrowserHelpers
-            // Contrary to File.ReadAllBytes, this function works on Android 10+, as well
-            // byte[] bytes = FileBrowserHelpers.ReadBytesFromFile(FileBrowser.Result[0]);
+            File.Copy(sourcePath, targetPath, true);
 
-            // Or, copy the first file to persistentDataPath
-            string destinationPath = Path.Combine(Application.persistentDataPath, FileBrowserHelpers.GetFilename(FileBrowser.Result[0]));
-            FileBrowserHelpers.CopyFile(FileBrowser.Result[0], destinationPath);
+            audioAnalyzerManager.Main(FileBrowser.Result[0], Path.Combine(Application.dataPath, destinationPath));
         }
-        */
-        string destinationPath =  "Beatmaps/Generated/";
-
-        string sourcePath = FileBrowser.Result[0];
-        string fileName = /*Path.GetFileName(sourcePath);*/ "song.wav";
-        string targetPath = Path.Combine(Application.dataPath, destinationPath, fileName);
-
-        File.Copy(sourcePath, targetPath, true);
-    
-        audioAnalyzerManager.Main(FileBrowser.Result[0], Path.Combine(Application.dataPath, destinationPath));
+        if (!FileBrowser.Success) 
+        { 
+            audioAnalyzerManager.FinishedGenerating();
+        }
     }
 }
