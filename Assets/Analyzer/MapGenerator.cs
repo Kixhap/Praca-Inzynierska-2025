@@ -6,6 +6,7 @@ using UnityEngine;
 public class MapGenerator
 {
     private List<Tuple<float, float, int>> beats = new List<Tuple<float, float, int>>();
+    private int? lastLane;
 
     public void SetSpikes(List<Tuple<float, float, int>> beats)
     {
@@ -19,7 +20,7 @@ public class MapGenerator
         foreach (var beat in beats)
         {
             int timeMs = (int)(beat.Item2 * 1000);
-            int lane = GetLaneBasedOnBPM(beat.Item2);
+            int? lane = GetLaneWithBias(beat.Item2);
             beatmapData.Add($"1;{timeMs};{lane}");
         }
 
@@ -27,8 +28,16 @@ public class MapGenerator
         Debug.Log($"Map generated: {outputFilePath}");
     }
 
-    private int GetLaneBasedOnBPM(float time)
+    private int? GetLaneWithBias(float time)
     {
-        return (Mathf.FloorToInt(time * 4) % 2 == 0) ? -1 : 1;
+        if ((UnityEngine.Random.Range(0f, 1f) > 0.85f && lastLane != null) || (lastLane == 1))
+        {
+           lastLane = (lastLane == 1) ? -1 : 1;
+           return lastLane;
+        }
+        else
+        {
+            return (Mathf.FloorToInt(time * 4) % 2 == 0) ? -1 : 1;
+        }
     }
 }

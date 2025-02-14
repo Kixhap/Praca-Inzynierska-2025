@@ -3,17 +3,19 @@ using System.Collections;
 using System.IO;
 using SimpleFileBrowser;
 using UnityEditor;
+using System;
 
 public class FileBrowserTest : MonoBehaviour
 {
     [SerializeField]
     private AudioAnalyzerManager audioAnalyzerManager;
+    string[] extensions = { "*.mp3", "*.wav" };
     public void SelectFile()
     {
         // Set filters (optional)
         // It is sufficient to set the filters just once (instead of each time before showing the file browser dialog), 
         // if all the dialogs will be using the same filters
-        FileBrowser.SetFilters(true, new FileBrowser.Filter("SoundFiles", ".wav"));
+        FileBrowser.SetFilters(true, new FileBrowser.Filter("SoundFiles", ".wav", ".mp3"));
 
         // Set default filter that is selected when the dialog is shown (optional)
         // Returns true if the default filter is set successfully
@@ -70,8 +72,20 @@ public class FileBrowserTest : MonoBehaviour
         {
             string destinationPath = "Beatmaps/Generated/";
             string sourcePath = FileBrowser.Result[0];
-            string fileName = /*Path.GetFileName(sourcePath);*/ "song.wav";
+            string fileName ="song";
+            string extension = Path.GetExtension(sourcePath);
+            fileName = fileName + extension;
             string targetPath = Path.Combine(Application.dataPath, destinationPath, fileName);
+            Debug.Log(targetPath);
+
+            foreach (string ext in extensions)
+            {
+                foreach (string file in Directory.GetFiles(Path.Combine(Application.dataPath, destinationPath), ext, SearchOption.AllDirectories))
+                {
+                    File.Delete(file);
+                    Console.WriteLine($"Usuniêto: {file}");
+                }
+            }
 
             File.Copy(sourcePath, targetPath, true);
 

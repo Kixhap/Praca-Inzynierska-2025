@@ -64,7 +64,11 @@ public class AudioAnalyzerManager : MonoBehaviour
         if (path.EndsWith(".wav"))
         {
             return new WavFileReader(path);
-        } 
+        }
+        if (path.EndsWith(".mp3"))
+        {
+            return new Mp3FileReader(path);
+        }
         return null;
     }
     public void FinishedGenerating()

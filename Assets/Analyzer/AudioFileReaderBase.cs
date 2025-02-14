@@ -7,11 +7,11 @@ using UnityEngine;
 
 public abstract class AudioFileReaderBase : IAudioFileReader
 {
-    protected List<float> beatTimes = new List<float>();
+    protected List<float> beatTimes = new();
     protected float bpm = 120;
     protected int fftWindowSize = 1024;
     protected float beatThreshold = 0.1f;
-    private Queue<float> energyBuffer = new Queue<float>();
+    private Queue<float> energyBuffer = new();
     private const int bufferSize = 20; // Liczba ostatnich okien do analizy
 
     public abstract AudioClip ToAudioClip();
@@ -49,7 +49,7 @@ public abstract class AudioFileReaderBase : IAudioFileReader
             {
                 float time = currentIndex / (float)clip.frequency;
                 // Dodajemy beat tylko, gdy odstêp miêdzy beatami wynosi co najmniej 0.1 s
-                if (beatTimes.Count == 0 || time - beatTimes[beatTimes.Count - 1] > 0.1f)
+                if (beatTimes.Count == 0 || time - beatTimes[^1] > 0.1f)
                 {
                     beatTimes.Add(time);
                     Debug.Log($"Beat detected at: {time:F2}s");
@@ -108,7 +108,7 @@ public abstract class AudioFileReaderBase : IAudioFileReader
         for (int len = 2; len <= n; len *= 2)
         {
             double angle = -2 * Math.PI / len;
-            Complex wLen = new Complex(Math.Cos(angle), Math.Sin(angle));
+            Complex wLen = new(Math.Cos(angle), Math.Sin(angle));
 
             for (int i = 0; i < n; i += len)
             {
