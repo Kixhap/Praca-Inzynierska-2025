@@ -1,6 +1,8 @@
 # RhythmRush
 
-Projekt powstał na potrzebę pracy inżynierskiej
+## Proceduralna Generacja Obiektów w Grze Rytmicznej
+
+Projekt ten powstał na potrzebę pracy inżynierskiej i ma na celu stworzenie algorytmu do automatycznego generowania obiektów w grze rytmicznej na podstawie analizy plików dźwiękowych. Wykorzystuje on analizę FFT (Fast Fourier Transform) oraz pomiar energii sygnału do wykrywania beatów i synchronizacji elementów gry z muzyką. Repozytorium zawiera pełną implementację algorytmu i integrację z silnikiem Unity.
 
 ## Pokaz rozgrywki:
 
