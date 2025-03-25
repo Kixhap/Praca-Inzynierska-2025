@@ -5,16 +5,16 @@ using UnityEngine;
 
 public class WavFileReader : AudioFileReaderBase
 {
-    private string filePath;
+    private string _filePath;
 
     public WavFileReader(string path)
     {
-        filePath = path;
+        _filePath = path;
     }
 
     public override AudioClip ToAudioClip()
     {
-        byte[] fileBytes = File.ReadAllBytes(filePath);
+        byte[] fileBytes = File.ReadAllBytes(_filePath);
 
         int sampleRate = BitConverter.ToInt32(fileBytes, 24);
         int channels = BitConverter.ToInt16(fileBytes, 22);

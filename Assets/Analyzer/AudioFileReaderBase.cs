@@ -8,11 +8,12 @@ using UnityEngine;
 public abstract class AudioFileReaderBase : IAudioFileReader
 {
     protected List<float> beatTimes = new();
-    protected float bpm = 120;
     protected int fftWindowSize = 1024;
-    protected float beatThreshold = 0.1f;
     private Queue<float> energyBuffer = new();
-    private const int bufferSize = 20; // Liczba ostatnich okien do analizy
+    private const int bufferSize = 30; // Liczba ostatnich okien do analizy
+
+    [SerializeField]
+    protected float beatThreshold = 0.35f;
 
     public abstract AudioClip ToAudioClip();
 
@@ -88,52 +89,38 @@ public abstract class AudioFileReaderBase : IAudioFileReader
         return maxEnergy > beatThreshold;
     }
 
-    //implementacja FFT.
+    // Rekurencyjna implementacja FFT
     private void FFT(Complex[] buffer)
     {
         int n = buffer.Length;
-        int bits = (int)Math.Log(n, 2);
 
-        // Permutacja bitowa
-        for (int i = 0; i < n; i++)
+        // jesli rozmiar bufora to 1, zwroc
+        if (n <= 1)
+            return;
+
+        // podzielone dane na dwie czêœci: parzyste i nieparzyste
+        Complex[] even = new Complex[n / 2];
+        Complex[] odd = new Complex[n / 2];
+        for (int i = 0; i < n / 2; i++)
         {
-            int j = ReverseBits(i, bits);
-            if (i < j)
-            {
-                (buffer[i], buffer[j]) = (buffer[j], buffer[i]);
-            }
+            even[i] = buffer[2 * i];      // Parzyste elementy
+            odd[i] = buffer[2 * i + 1];   // Nieparzyste elementy
         }
 
-        // Motyw "Butterfly"
-        for (int len = 2; len <= n; len *= 2)
-        {
-            double angle = -2 * Math.PI / len;
-            Complex wLen = new(Math.Cos(angle), Math.Sin(angle));
+        // Rekurencyjni FFT dla obu czêœci
+        FFT(even);
+        FFT(odd);
 
-            for (int i = 0; i < n; i += len)
-            {
-                Complex w = Complex.One;
-                for (int j = 0; j < len / 2; j++)
-                {
-                    Complex u = buffer[i + j];
-                    Complex v = w * buffer[i + j + len / 2];
-                    buffer[i + j] = u + v;
-                    buffer[i + j + len / 2] = u - v;
-                    w *= wLen;
-                }
-            }
-        }
-    }
-    // Odwraca bity liczby, wykorzystywane przy permutacji bitowej FFT.
-    private int ReverseBits(int num, int bitSize)
-    {
-        int result = 0;
-        for (int i = 0; i < bitSize; i++)
+        // Twiddle factor i laczenie wynikow
+        double angle = -2 * Math.PI / n;
+        Complex w = Complex.One;
+        for (int i = 0; i < n / 2; i++)
         {
-            result = (result << 1) | (num & 1);
-            num >>= 1;
+            Complex temp = w * odd[i];  // mnozenie przez jednostkowy pierwiastek z jednosci
+            buffer[i] = even[i] + temp;
+            buffer[i + n / 2] = even[i] - temp;
+            w *= new Complex(Math.Cos(angle), Math.Sin(angle));  // Zmiana "w"
         }
-        return result;
     }
 
     // Oblicza avg energie (z kwadratów wartosci) danego okna próbek.
