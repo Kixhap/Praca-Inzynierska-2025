@@ -8,3 +8,5 @@ Projekt ten powstał na potrzebę pracy inżynierskiej i ma na celu stworzenie a
 
 https://github.com/user-attachments/assets/cb5beca2-1104-499e-8542-20b285da5e78
 
+###
+[UnitySimpleFileBrowser](https://github.com/yasirkula/UnitySimpleFileBrowser?tab=MIT-1-ov-file#readme) Autorstwa Süleyman Yasir KULA (licencja MIT).
